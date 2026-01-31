@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InnoBrain - AI Idea Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1><span class="logo">🧠 InnoBrain</span></h1>
+        <p class="subtitle">Enter any topic or keyword — let AI generate innovative project ideas for you!</p>
+
+        <form id="ideaForm">
+            <input type="text" id="topic" name="topic" placeholder="e.g. Blockchain, Mental Health, AI in Education..." required>
+            <button type="submit">Generate</button>
+        </form>
+
+        <div id="output" class="output"></div>
+
+        <footer>
+            Built with ❤️ using Flask + OpenAI API <br>
+            © 2025 InnoBrain by Kanishak Thakur
+        </footer>
+    </div>
+
+    <script>
+        const form = document.getElementById('ideaForm');
+        const outputDiv = document.getElementById('output');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const topic = document.getElementById('topic').value.trim();
+
+            outputDiv.innerHTML = '<p>⚙️ Generating ideas...</p>';
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'topic=' + encodeURIComponent(topic)
+                });
+
+                const data = await response.json();
+
+                outputDiv.innerHTML = '<h3>💡 Generated Ideas:</h3>';
+                data.forEach(idea => {
+                    const p = document.createElement('p');
+                    p.classList.add('idea');
+                    p.textContent = idea;
+                    outputDiv.appendChild(p);
+                });
+
+            } catch (error) {
+                outputDiv.innerHTML = '<p>❌ Error generating ideas. Please try again.</p>';
+            }
+        });
+    </script>
+</body>
+</html>
